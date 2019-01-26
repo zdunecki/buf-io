@@ -1,0 +1,6 @@
+.idea/
+.env
+vendor/
+*.env
+debug
+buf-io.yaml

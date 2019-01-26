@@ -1,0 +1,20 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      args:
+        - PROJECT_PACKAGE_NAME=github.com/zdunecki/buf-io
+    restart: on-failure
+    volumes:
+      - .:/go/src/github.com/zdunecki/buf-io
+    entrypoint: dlv debug --headless --listen=:2346 --api-version=2 cmd/api/main.go
+    env_file:
+      - .env
+    ports:
+      - "5555:5555"
+      - "2346:2346"
+    security_opt:
+      - "seccomp:unconfined"
+
+
