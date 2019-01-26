@@ -1,0 +1,8 @@
+config:
+  providers:
+    - dropbox
+  integrations:
+    slack:
+      namespace: "{{CHANNEL_NAME}}({{CHANNEL_ID}})"
+      noack:
+        - CFCKM4GDQ
