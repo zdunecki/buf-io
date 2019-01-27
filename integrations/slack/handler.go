@@ -3,6 +3,7 @@ package slack
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/zdunecki/buf-io/config"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -69,7 +70,17 @@ func InteractiveComponents(c *gin.Context) {
 
 	switch msg.Type {
 	case string(InteractiveComponentType.InteractiveMessage):
-		InteractiveComponentType.InteractiveMessage.callback(msg)
+		{
+			conf, err := config.Get()
+			if err != nil {
+				log.Fatal(err)
+			}
+			InteractiveComponentType.InteractiveMessage.callback(
+				msg,
+				conf.Config.Integrations.Slack,
+				conf.Config.Storage,
+			)
+		}
 	default:
 		{
 			c.JSON(http.StatusNotFound, nil)

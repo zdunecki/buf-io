@@ -2,6 +2,7 @@ package slack
 
 import (
 	"encoding/json"
+	"github.com/zdunecki/buf-io/config"
 	"log"
 )
 
@@ -15,7 +16,7 @@ type InteractiveMessageValueCallback struct {
 	Val         string `json:"val"`
 }
 
-func (t *InteractiveMessageType) callback(msg InteractiveComponent) {
+func (t *InteractiveMessageType) callback(msg InteractiveComponent, integration config.Integration, storage []string) {
 	for _, action := range msg.Actions {
 		var val InteractiveMessageValueCallback
 		if err := json.Unmarshal([]byte(action.Value), &val); err != nil {
@@ -25,6 +26,6 @@ func (t *InteractiveMessageType) callback(msg InteractiveComponent) {
 		if val.Val != "1" {
 			continue
 		}
-		go UploadToProvider(val)
+		go StorageUpload(val, integration, storage)
 	}
 }

@@ -2,8 +2,8 @@ package tests
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/zdunecki/buf-io/config"
 	"github.com/zdunecki/buf-io/integrations/slack"
-	"github.com/zdunecki/buf-io/utils"
 	"testing"
 )
 
@@ -16,13 +16,17 @@ func TestBufIoConfig(t *testing.T) {
 		ChannelId: "test-id",
 	}
 
-	assert.Equal(utils.ConfigNamespace(testNamespace, model), "test-name(test-id)")
+	conf := &config.BufIoConfig{}
+
+	assert.Equal(conf.NamespaceToPath(testNamespace, model), "test-name(test-id)")
+
+	conf2 := &config.BufIoConfig{}
 
 	testNamespace2 := "{{CHANNEL_NAME}} - {{CHANNEL_ID}}"
 	model2 := &slack.InteractiveMessageValueCallback{
 		ChannelName: "test-name",
 		ChannelId: "test-id",
 	}
-	assert.Equal(utils.ConfigNamespace(testNamespace2, model2), "test-name - test-id")
+	assert.Equal(conf2.NamespaceToPath(testNamespace2, model2), "test-name - test-id")
 
 }

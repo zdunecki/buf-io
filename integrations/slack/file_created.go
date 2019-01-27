@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/nlopes/slack"
 	"github.com/satori/go.uuid"
+	"github.com/zdunecki/buf-io/config"
 	"github.com/zdunecki/buf-io/utils"
 )
 
@@ -42,7 +43,7 @@ func (t *FileCreatedType) createAttachments(valueYes, valueNo InteractiveMessage
 	})
 }
 
-func (t *FileCreatedType) callback(fileEvent []byte, event *Event) error  {
+func (t *FileCreatedType) callback(fileEvent []byte, event *Event) error {
 	file := &File{}
 	err := json.Unmarshal(fileEvent, &file)
 
@@ -64,14 +65,11 @@ func (t *FileCreatedType) callback(fileEvent []byte, event *Event) error  {
 	}
 
 	//TODO: what if we share file between channels?
-	for channelId, _ := range sharesContent {
-		//for _, content := range sharesContent {
-		//}
-		//if err := PostEphemeral(string(channelId), event.Event.UserId, text, attachments); err != nil {
-		//	return err
-		//}
-
+	for channelId := range sharesContent {
 		channelName, err := GetChannelInfo(string(channelId))
+		if err != nil {
+			return err
+		}
 
 		valueYes := InteractiveMessageValueCallback{
 			ChannelName: channelName.Name,
@@ -81,18 +79,18 @@ func (t *FileCreatedType) callback(fileEvent []byte, event *Event) error  {
 			Val:         "1",
 		}
 
-		conf := utils.GetBufIoConfig()
-		noack := conf.Config.Integrations.Slack.NoAck
-		contains := utils.Contains(noack, string(channelId))
-
-		if contains {
-			UploadToProvider(valueYes)
-			continue
-		}
-
+		conf, err := config.Get()
 		if err != nil {
 			return err
 		}
+
+		noAckRoom := utils.Contains(conf.Config.Integrations.Slack.NoAck, string(channelId))
+
+		if noAckRoom {
+			go StorageUpload(valueYes, conf.Config.Integrations.Slack, conf.Config.Storage)
+			continue
+		}
+
 
 		valueNo := valueYes
 		valueNo.Val = "0"
