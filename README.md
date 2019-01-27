@@ -21,6 +21,13 @@ Storage management platform connected with your favourite products.
 * Data storage and integrations supported by buf-io
 * buf-io configure file (buf-io.yaml)
 
+### How to run
+```
+docker-compose build
+docker-compose up
+```
+Then call remote debug (described above) and then app should run on port default port (5555).
+
 ## buf-io.yaml
 This is a configuration file. Currently structure looks like this:
 
