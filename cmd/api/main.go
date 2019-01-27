@@ -8,7 +8,12 @@ import (
 )
 
 func host() string {
-	u, err := url.Parse(os.Getenv("DOCKER_APP_URL"))
+	dockerAppUrl := os.Getenv("DOCKER_APP_URL")
+
+	if dockerAppUrl == "" {
+		dockerAppUrl = "http://0.0.0.0:5555"
+	}
+	u, err := url.Parse(dockerAppUrl)
 	if err != nil {
 		panic(err)
 	}

@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const DropBox = "dropbox"
+
 type Integration struct {
 	Namespace string   `json:"namespace"`
 	NoAck     []string `json:"noack"`
@@ -16,7 +18,7 @@ type Integration struct {
 
 type BufIoConfig struct {
 	Config struct {
-		Storage      []string      `json:"storage"`
+		Storage      []string `json:"storage"`
 		Integrations struct {
 			Slack Integration `json:"slack"`
 		} `json:"integrations"`

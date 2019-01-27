@@ -29,7 +29,7 @@ func StorageUpload(val InteractiveMessageValueCallback, integration config.Integ
 	for _, s := range storage {
 		go func() {
 			switch s {
-			case "dropbox":
+			case config.DropBox:
 				{
 					//TODO: to scale up we need upload via session
 					err = dropbox.Upload(path.Join(uploadPath, val.FileName), content)
